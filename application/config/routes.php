@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------------
@@ -52,3 +52,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+
+//admin
+$route['admin'] = 'admin/admin/index';
+$route['admin/logout'] = 'admin/admin/logout';
+
+$route['admin/book/list'] = 'admin/book/index';
+$route['admin/user/list'] = 'admin/user/index';
+
+$route['admin/package/list'] = 'admin/package/index';
+$route['admin/package/add'] = 'admin/package/add';
+$route['admin/package/insert'] = 'admin/package/insert';
+
+$route['admin/workday'] = 'admin/workday/index';
+
+//frontend
+$route['package'] = 'package/index';
+
+
+
+
