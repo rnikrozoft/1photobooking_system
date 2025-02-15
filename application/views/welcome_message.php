@@ -10,11 +10,12 @@
     <link rel="stylesheet" href="<?= base_url('assets/plugins/fontawesome-free/css/all.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/dist/css/adminlte.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/customs/css/fonts.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/plugins/toastr/toastr.min.css') ?>">
 </head>
 
 <body class="hold-transition layout-top-nav kanit-light">
     <div class="wrapper">
-        <?php $this->load->view($components['aside']); ?>
+        <?php $this->load->view($components['topnav']); ?>
         <div class="content-wrapper">
             <div class="content-header bg-white">
                 <div class="container">
@@ -84,16 +85,20 @@
                 </section>
             </div>
         </div>
-        <footer class="main-footer">
-            <div class="float-right d-none d-sm-inline">
-                รัตนพร บุญสุภา
-            </div>
-            <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
-        </footer>
+        <?php $this->load->view($components['footer']); ?>
     </div>
     <script src="<?= base_url('assets/plugins/jquery/jquery.min.js') ?>"></script>
     <script src="<?= base_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
     <script src="<?= base_url('assets/dist/js/adminlte.min.js'); ?>"></script>
+    <script src="<?= base_url('assets/plugins/toastr/toastr.min.js') ?>"></script>
+    <script>
+        <?php if ($this->session->flashdata('error')): ?>
+            toastr.error('<?php echo $this->session->flashdata('error') ?>')
+        <?php endif; ?>
+        <?php if ($this->session->flashdata('ok')): ?>
+            toastr.success('<?php echo $this->session->flashdata('ok') ?>')
+        <?php endif; ?>
+    </script>
 </body>
 
 </html>

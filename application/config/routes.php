@@ -52,22 +52,39 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+$route['home'] = 'welcome/home';
 
 //admin
 $route['admin'] = 'admin/admin/index';
-$route['admin/logout'] = 'admin/admin/logout';
+$route['admin/login'] = 'authentication/admin_login';
+$route['admin/logout'] = 'authentication/admin_logout';
 
 $route['admin/book/list'] = 'admin/book/index';
+
 $route['admin/user/list'] = 'admin/user/index';
+$route['admin/user/delete'] = 'admin/user/delete';
+$route['admin/user/update'] = 'admin/user/update';
 
 $route['admin/package/list'] = 'admin/package/index';
 $route['admin/package/add'] = 'admin/package/add';
 $route['admin/package/insert'] = 'admin/package/insert';
+$route['admin/package/(:num)/add/image'] = 'admin/package/insert_images/$1';
+$route['admin/package/upload/image'] = 'admin/package/do_upload';
+$route['admin/package/image/main'] = 'admin/package/set_main_image';
+$route['admin/package/image/delete'] = 'admin/package/delete_image';
+$route['admin/package/delete'] = 'admin/package/delete';
 
 $route['admin/workday'] = 'admin/workday/index';
 
 //frontend
+$route['register'] = 'user/register';
+$route['login'] = 'authentication/login';
+$route['logout'] = 'authentication/logout';
+
 $route['package'] = 'package/index';
+
+$route['book/summary'] = 'book/summary';
+
 
 
 

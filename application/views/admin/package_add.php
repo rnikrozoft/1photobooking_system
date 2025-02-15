@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/plugins/fontawesome-free/css/all.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/dist/css/adminlte.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/customs/css/fonts.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/plugins/toastr/toastr.min.css') ?>">
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed kanit-extralight">
@@ -70,6 +71,12 @@
     <script src="<?= base_url('assets/plugins/jquery/jquery.min.js') ?>"></script>
     <script src="<?= base_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
     <script src="<?= base_url('assets/dist/js/adminlte.js') ?>"></script>
+    <script src="<?= base_url('assets/plugins/toastr/toastr.min.js') ?>"></script>
+    <script>
+        <?php if ($this->session->flashdata('error')): ?>
+            toastr.error('<?php echo $this->session->flashdata('error') ?>')
+        <?php endif; ?>
+    </script>
 </body>
 
 </html>

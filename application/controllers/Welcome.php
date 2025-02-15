@@ -21,7 +21,13 @@ class Welcome extends CI_Controller
 	 */
 	public function index()
 	{
-		$data["components"]["aside"] = 'components/aside';
+		$this->load->view('index');
+	}
+
+	public function home()
+	{
+        $data["components"]["topnav"] = 'components/top_nav';
+        $data["components"]["footer"] = 'components/footer';
 		$this->load->view('welcome_message', $data);
 	}
 

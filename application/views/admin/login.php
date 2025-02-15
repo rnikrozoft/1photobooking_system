@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/dist/css/adminlte.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/customs/css/fonts.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/plugins/toastr/toastr.min.css') ?>">
 </head>
 
 <body class="hold-transition login-page kanit-extralight">
@@ -20,9 +21,9 @@
         </div>
         <div class="card">
             <div class="card-body login-card-body">
-                <form action="" method="post">
+                <form action="<?= base_url('admin/login') ?>" method="post">
                     <div class="input-group mb-3">
-                        <input type="email" class="form-control" placeholder="ชื่อผู้ใช้">
+                        <input type="text" class="form-control" name="username" placeholder="ชื่อผู้ใช้">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>
@@ -30,7 +31,7 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        <input type="password" class="form-control" placeholder="รหัสผ่าน">
+                        <input type="password" class="form-control" name="password" placeholder="รหัสผ่าน">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
@@ -42,7 +43,7 @@
                             <a href="<?= site_url(); ?>" class="btn btn-block btn-outline-secondary">เยี่ยมชมหน้าเว็บไซต์</a>
                         </div>
                         <div class="col-6">
-                            <button type="button" class="btn bg-gradient-primary btn-block">เข้าสู่ระบบ</button>
+                            <button type="submit" class="btn bg-gradient-primary btn-block">เข้าสู่ระบบ</button>
                         </div>
                     </div>
                 </form>
@@ -52,6 +53,15 @@
     <script src="<?= base_url('assets/plugins/jquery/jquery.min.js') ?>"></script>
     <script src="<?= base_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
     <script src="<?= base_url('assets/dist/js/adminlte.min.js') ?>"></script>
+    <script src="<?= base_url('assets/plugins/toastr/toastr.min.js') ?>"></script>
+    <script>
+        <?php if ($this->session->flashdata('error')): ?>
+            toastr.error('<?php echo $this->session->flashdata('error') ?>')
+        <?php endif; ?>
+        <?php if ($this->session->flashdata('ok')): ?>
+            toastr.success('<?php echo $this->session->flashdata('ok') ?>')
+        <?php endif; ?>
+    </script>
 </body>
 
 </html>

@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/dist/css/adminlte.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/customs/css/fonts.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/plugins/toastr/toastr.min.css') ?>">
+
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed kanit-extralight">
@@ -43,23 +45,24 @@
                                     <table id="book" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                                <th>Rendering engine</th>
-                                                <th>Browser</th>
-                                                <th>Platform(s)</th>
-                                                <th>Engine version</th>
-                                                <th>CSS grade</th>
+                                                <th>รหัสแพ็กเกจ</th>
+                                                <th>ชื่อแพ็กเกจ</th>
+                                                <th>เรตราคาต่อชั่วโมง</th>
+                                                <th>การจัดการ</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>Trident</td>
-                                                <td>Internet
-                                                    Explorer 4.0
-                                                </td>
-                                                <td>Win 95+</td>
-                                                <td> 4</td>
-                                                <td>X</td>
-                                            </tr>
+                                            <?php foreach ($packages as $package) { ?>
+                                                <tr>
+                                                    <td><?= $package["id"] ?></td>
+                                                    <td><?= $package["package_name"] ?></td>
+                                                    <td><?= $package["package_rate"] ?></td>
+                                                    <td>
+                                                        <a href="#" class="btn btn-warning">แก้ไข</a>
+                                                        <button type="button" class="btn btn-danger delete" data-id="<?= $package["id"]; ?>">ลบ</button>
+                                                    </td>
+                                                </tr>
+                                            <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -79,6 +82,9 @@
     <script src="<?= base_url('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') ?>"></script>
     <script src="<?= base_url('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') ?>"></script>
     <script src="<?= base_url('assets/dist/js/adminlte.js') ?>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="<?= base_url('assets/plugins/toastr/toastr.min.js') ?>"></script>
+
     <script>
         $(function() {
             $("#book").DataTable({
@@ -101,6 +107,45 @@
                 }
             });
 
+            $(document).on("click", ".delete", function() {
+                var packageId = $(this).data("id");
+                var row = $(this).closest("tr"); // หาแถวที่ต้องการลบ
+
+                Swal.fire({
+                    text: "ข้อมูลแพ็กเกจ และรูปภาพจะหายไป",
+                    title: "ลบแพ็กเกจรหัส " + packageId + ", แน่ใจหรือไม่ ?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "ใช่, ลบข้อมูล",
+                    cancelButtonText: "ยกเลิก",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "<?= base_url('admin/package/delete') ?>",
+                            method: "POST",
+                            data: {
+                                package_id: packageId
+                            },
+                            success: function(response) {
+                                var res = JSON.parse(response);
+                                if (res.success) {
+                                    toastr.success(res.success);
+
+                                    var datatable = $("#book").DataTable(); // เปลี่ยนเป็น ID ของ DataTable จริง ๆ
+                                    datatable.row(row).remove().draw();
+                                } else {
+                                    toastr.error(res.error);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                toastr.error("เกิดข้อผิดพลาด: " + error);
+                            }
+                        });
+                    }
+                });
+            });
         });
     </script>
 </body>

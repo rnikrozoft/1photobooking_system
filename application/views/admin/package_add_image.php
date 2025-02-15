@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/plugins/fontawesome-free/css/all.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/dist/css/adminlte.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/customs/css/fonts.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/plugins/toastr/toastr.min.css') ?>">
     <?php
     foreach ($styles as $style) {
         echo '<link rel="stylesheet" href="' . base_url($style) . '">';
@@ -25,7 +26,10 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0">xxxxx</h1>
+                            <h1 class="m-0">
+                                เพิ่มรูปภาพแพ็กเกจ :
+                                <?= $data["package_name"]; ?>
+                            </h1>
                         </div>
                         <div class="col-sm-6 text-right">
                             <a href="<?= site_url('admin/package/list'); ?>" class="btn btn-sm bg-gradient-secondary">ย้อนกลับ</a>
@@ -78,7 +82,7 @@
                                             <div class="col-auto d-flex align-items-center">
                                                 <div class="btn-group">
                                                     <button type="button" class="btn btn-primary start">
-                                                        <i class="fas fa-upload"></i>
+                                                        <i class="fas fa-star"></i>
                                                         <span>ใช้เป็นรูปหลัก</span>
                                                     </button>
                                                     <button type="button" data-dz-remove class="btn btn-danger delete">
@@ -102,55 +106,118 @@
     <script src="<?= base_url('assets/plugins/jquery/jquery.min.js') ?>"></script>
     <script src="<?= base_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
     <script src="<?= base_url('assets/dist/js/adminlte.js') ?>"></script>
+    <script src="<?= base_url('assets/plugins/toastr/toastr.min.js') ?>"></script>
     <?php
     foreach ($scripts as $script) {
         echo '<script src="' . base_url($script) . '"></script>';
     }
     ?>
     <script>
-        // DropzoneJS Demo Code Start
+        package_id = <?= $data["id"]; ?>;
+
         Dropzone.autoDiscover = false
 
-        // Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument
         var previewNode = document.querySelector("#template")
         previewNode.id = ""
         var previewTemplate = previewNode.parentNode.innerHTML
         previewNode.parentNode.removeChild(previewNode)
 
-        var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
-            url: "/target-url", // Set the url
+        var myDropzone = new Dropzone(document.body, {
+            url: "<?= base_url('admin/package/upload/image') ?>",
+            params: {
+                package_id: package_id,
+            },
             thumbnailWidth: 80,
             thumbnailHeight: 80,
             parallelUploads: 20,
             previewTemplate: previewTemplate,
-            autoQueue: false, // Make sure the files aren't queued until manually added
-            previewsContainer: "#previews", // Define the container to display the previews
-            clickable: ".fileinput-button" // Define the element that should be used as click trigger to select files.
+            autoQueue: true,
+            previewsContainer: "#previews",
+            clickable: ".fileinput-button"
         })
 
-        myDropzone.on("addedfile", function(file) {
-            // Hookup the start button
-            file.previewElement.querySelector(".start").onclick = function() {
-                myDropzone.enqueueFile(file)
+        myDropzone.on("success", function(file, response) {
+            var res = JSON.parse(response);
+            if (res.success) {
+                toastr.success(res.success);
+                $(file.previewElement).find(".start").attr("data-image-id", res.image_id);
+                $(file.previewElement).find(".delete").attr("data-image-id", res.image_id);
+            } else {
+                toastr.error(res.error);
             }
-        })
+        });
 
-        // Update the total progress bar
         myDropzone.on("totaluploadprogress", function(progress) {
             document.querySelector("#total-progress .progress-bar").style.width = progress + "%"
         })
 
         myDropzone.on("sending", function(file) {
-            // Show the total progress bar when upload starts
             document.querySelector("#total-progress").style.opacity = "1"
-            // And disable the start button
-            file.previewElement.querySelector(".start").setAttribute("disabled", "disabled")
         })
 
-        // Hide the total progress bar when nothing's uploading anymore
         myDropzone.on("queuecomplete", function(progress) {
             document.querySelector("#total-progress").style.opacity = "0"
         })
+
+        $(document).on("click", ".start, .delete", function() {
+            var imageId = $(this).data("image-id");
+            $.ajax({
+                url: "<?= base_url('admin/package/image/main') ?>",
+                method: "POST",
+                data: {
+                    package_id: package_id,
+                    image_id: imageId
+                },
+                success: function(response) {
+                    var res = JSON.parse(response);
+                    if (res.success) {
+                        toastr.success(res.success);
+                    } else {
+                        toastr.error(res.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    toastr.error('เกิดข้อผิดพลาด: ' + error);
+                }
+            });
+        });
+
+        myDropzone.on("removedfile", function(file) {
+            var imageId = $(file.previewElement).find(".delete").data("image-id");
+
+            $.ajax({
+                url: "<?= base_url('admin/package/image/delete') ?>",
+                method: "POST",
+                data: {
+                    image_id: imageId
+                },
+                success: function(response) {
+                    var res = JSON.parse(response);
+                    if (res.success) {
+                        toastr.success(res.success);
+                    } else {
+                        toastr.error(res.error);
+                        myDropzone.emit("addedfile", file);
+                        myDropzone.emit("thumbnail", file, file.dataURL);
+
+                        $(file.previewElement).find("img").css({
+                            "width": "80px",
+                            "height": "80px"
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    toastr.error('เกิดข้อผิดพลาด: ' + error);
+                    myDropzone.emit("addedfile", file);
+                    myDropzone.emit("thumbnail", file, file.dataURL);
+
+                    $(file.previewElement).find("img").css({
+                        "width": "80px",
+                        "height": "80px"
+                    });
+                }
+            });
+        });
     </script>
 </body>
 
