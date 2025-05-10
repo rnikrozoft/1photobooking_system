@@ -23,7 +23,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = '';
+// $config['base_url'] = 'http://project-com-tech.ubru.ac.th/~cpt4ys6406/';
+$config['base_url'] = 'http://localhost/1photobooking_system/';
 
 /*
 |--------------------------------------------------------------------------
